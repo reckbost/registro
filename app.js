@@ -18,12 +18,7 @@ function setupEventListeners() {
     document.getElementById('btnEstudiantes').addEventListener('click', () => switchSection('estudiantes'));
     document.getElementById('btnAsistencias').addEventListener('click', () => switchSection('asistencias'));
     document.getElementById('btnEscanearQR').addEventListener('click', () => switchSection('escanear'));
-    document.getElementById('btnRegisterFromScan').addEventListener('click', registerFromScan);
     document.getElementById('btnBackup').addEventListener('click', showBackupModal);
-    document.getElementById('btnExportarEstudiantes').addEventListener('click', exportStudents);
-    document.getElementById('btnExportarAsistencias').addEventListener('click', exportAsistencias);
-    document.getElementById('btnExportarTodo').addEventListener('click', exportAll);
-    document.getElementById('btnImportarBackup').addEventListener('click', importBackup);
 }
 
 function switchSection(section) {
@@ -86,10 +81,15 @@ function renderAsistencias() {
 }
 
 function showStudentForm(student = null) {
+    let tempScanner = null;
+    
     Swal.fire({
         title: student ? 'Editar Estudiante' : 'Agregar Estudiante',
         html: `
-            <input id="dni" class="swal2-input" placeholder="DNI" value="${student?.dni || ''}" ${student ? 'readonly' : ''}>
+            <div style="display:flex;gap:10px;align-items:center;">
+                <input id="dni" class="swal2-input" placeholder="DNI" value="${student?.dni || ''}" style="flex:1;">
+                <button id="btnScanDni" class="swal2-styled" style="background:#4dabf7;padding:10px;">📷 Escanear DNI</button>
+            </div>
             <input id="nombres" class="swal2-input" placeholder="Nombres" value="${student?.nombres || ''}">
             <input id="apellidos" class="swal2-input" placeholder="Apellidos" value="${student?.apellidos || ''}">
             <select id="genero" class="swal2-select">
@@ -98,9 +98,39 @@ function showStudentForm(student = null) {
             </select>
             <input id="telefono" class="swal2-input" placeholder="Teléfono" value="${student?.telefono || ''}">
             <input id="edad" class="swal2-input" placeholder="Edad" type="number" value="${student?.edad || ''}">
+            <div id="scanner-container" style="margin-top:15px;display:none;">
+                <div id="dni-scanner" style="width:100%;max-width:300px;margin:0 auto;"></div>
+            </div>
         `,
         confirmButtonText: student ? 'Actualizar' : 'Guardar',
         focusConfirm: false,
+        didOpen: () => {
+            const btnScan = document.getElementById('btnScanDni');
+            if (btnScan) {
+                btnScan.addEventListener('click', () => {
+                    document.getElementById('scanner-container').style.display = 'block';
+                    btnScan.disabled = true;
+                    
+                    Html5Qrcode.getCameras().then(devices => {
+                        const backCameras = devices ? devices.filter(d => d.label && d.label.toLowerCase().includes('back')) : [];
+                        const selectedCamera = backCameras.length > 0 ? backCameras[0].id : (devices && devices.length ? devices[devices.length - 1].id : null);
+                        
+                        if (selectedCamera) {
+                            tempScanner = new Html5Qrcode('dni-scanner');
+                            tempScanner.start(selectedCamera, { fps: 10, qrbox: 200 }, 
+                                (decodedText) => {
+                                    tempScanner.stop().then(() => {
+                                        document.getElementById('dni').value = decodedText;
+                                        document.getElementById('scanner-container').style.display = 'none';
+                                        btnScan.disabled = false;
+                                    });
+                                }
+                            );
+                        }
+                    });
+                });
+            }
+        },
         preConfirm: () => {
             const dni = document.getElementById('dni').value;
             const nombres = document.getElementById('nombres').value;
@@ -117,14 +147,21 @@ function showStudentForm(student = null) {
             return { dni, nombres, apellidos, genero, telefono, edad: parseInt(edad) };
         }
     }).then(result => {
+        if (tempScanner) {
+            tempScanner.stop().catch(() => {});
+        }
         if (result.isConfirmed) {
             if (student) {
                 const index = students.findIndex(s => s.dni === student.dni);
+                if (result.value.dni !== student.dni) {
+                    asistencias = asistencias.map(a => a.dni === student.dni ? {...a, dni: result.value.dni} : a);
+                }
                 students[index] = result.value;
             } else {
                 students.push(result.value);
             }
             renderStudents();
+            renderAsistencias();
             Swal.fire('Guardado', 'Estudiante guardado correctamente', 'success');
         }
     });
@@ -245,10 +282,12 @@ function initQRScanner() {
     }
 
     Html5Qrcode.getCameras().then(devices => {
-        if (devices && devices.length) {
-            const cameraId = devices[0].id;
+        const backCameras = devices ? devices.filter(d => d.label && d.label.toLowerCase().includes('back')) : [];
+        const selectedCamera = backCameras.length > 0 ? backCameras[0].id : (devices && devices.length ? devices[0].id : null);
+        
+        if (selectedCamera) {
             qrScanner = new Html5Qrcode('qr-reader');
-            qrScanner.start(cameraId, {
+            qrScanner.start(selectedCamera, {
                 fps: 10,
                 qrbox: 250
             }, onScanSuccess, onScanError);
@@ -278,8 +317,13 @@ function onScanSuccess(decodedText) {
         });
 
         renderAsistencias();
-        qrScanner?.clear();
-        qrScanner = null;
+        if (qrScanner) {
+            qrScanner.clear().then(() => {
+                qrScanner = null;
+            });
+        } else {
+            qrScanner = null;
+        }
 
         Swal.fire({
             title: '✅ Asistencia Registrada',
@@ -294,44 +338,17 @@ function onScanSuccess(decodedText) {
             switchSection('escanear');
         });
     } else {
-        document.getElementById('qr-dni-result').textContent = decodedText;
-        document.getElementById('qr-result').classList.remove('hidden');
-        scannedDni = decodedText;
-        Swal.fire('❌ Error', `No se encontró el estudiante con DNI: ${decodedText}`, 'error');
+        if (qrScanner) {
+            qrScanner.clear().then(() => {
+                qrScanner = null;
+            });
+        }
+        Swal.fire('❌ Error', `No se encontró el estudiante con DNI: ${decodedText}. Agregue el estudiante primero.`, 'error');
     }
 }
 
 function onScanError(error) {
     console.warn('Error al escanear:', error);
-}
-
-let scannedDni = null;
-
-function registerFromScan() {
-    if (!scannedDni) return;
-
-    const student = students.find(s => s.dni === scannedDni);
-    if (!student) {
-        Swal.fire('Error', 'No se encontró el estudiante con DNI: ' + scannedDni, 'error');
-        return;
-    }
-
-    const today = new Date().toISOString().split('T')[0];
-    const now = new Date().toTimeString().split(':').slice(0, 2).join(':');
-
-    asistencias.push({
-        dni: scannedDni,
-        fecha: today,
-        hora: now,
-        estado: 'Presente'
-    });
-
-    renderAsistencias();
-    document.getElementById('qr-result').classList.add('hidden');
-    scannedDni = null;
-    qrScanner?.resume();
-
-    Swal.fire('Éxito', `Asistencia registrada para ${student.nombres} ${student.apellidos}`, 'success');
 }
 
 function showBackupModal() {

@@ -3,87 +3,110 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Gestión de Estudiantes y Asistencias</title>
+    <title>Student Manager Pro - Gestión Académica</title>
     <link rel="stylesheet" href="styles.css">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js"></script>
 </head>
 <body>
     <div class="container">
-        <header>
-            <h1>🏫 Gestión de Estudiantes y Asistencias</h1>
-            <nav>
-                <button id="btnEstudiantes" class="active">Estudiantes</button>
-                <button id="btnAsistencias">Asistencias</button>
-                <button id="btnEscanearQR">Escanear QR</button>
-                <button id="btnBackup">💾 Backup</button>
+        <header class="main-header">
+            <div class="header-content">
+                <h1><i class="fas fa-graduation-cap"></i> Student Manager Pro</h1>
+                <p class="subtitle">Sistema de Gestión de Estudiantes y Asistencias</p>
+            </div>
+            <nav class="main-nav">
+                <button id="btnEstudiantes" class="nav-btn active"><i class="fas fa-users"></i> Estudiantes</button>
+                <button id="btnAsistencias" class="nav-btn"><i class="fas fa-clipboard-check"></i> Asistencias</button>
+                <button id="btnEscanearQR" class="nav-btn"><i class="fas fa-qrcode"></i> Escanear QR</button>
+                <button id="btnBackup" class="nav-btn"><i class="fas fa-database"></i> Backup</button>
             </nav>
         </header>
 
-        <main>
+        <main class="main-content">
             <section id="sectionEstudiantes" class="section active">
                 <div class="section-header">
-                    <h2>Lista de Estudiantes</h2>
-                    <div>
-                        <button id="btnAgregarEstudiante" class="btn-primary">➕ Agregar Estudiante</button>
-                        <button id="btnExportarEstudiantes" class="btn-secondary">📤 Exportar Estudiantes</button>
+                    <h2><i class="fas fa-list"></i> Lista de Estudiantes</h2>
+                    <div class="header-actions">
+                        <button id="btnAgregarEstudiante" class="btn btn-primary"><i class="fas fa-plus"></i> Nuevo Estudiante</button>
+                        <button id="btnExportarEstudiantes" class="btn btn-outline"><i class="fas fa-file-export"></i> Exportar</button>
                     </div>
                 </div>
-                <div class="table-container">
-                    <table id="tablaEstudiantes">
-                        <thead>
-                            <tr>
-                                <th>DNI</th>
-                                <th>Nombres</th>
-                                <th>Apellidos</th>
-                                <th>Género</th>
-                                <th>Teléfono</th>
-                                <th>Edad</th>
-                                <th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tbodyEstudiantes">
-                        </tbody>
-                    </table>
+                <div class="card">
+                    <div class="table-container">
+                        <table id="tablaEstudiantes" class="data-table">
+                            <thead>
+                                <tr>
+                                    <th><i class="fas fa-id-card"></i> DNI</th>
+                                    <th><i class="fas fa-user"></i> Nombres</th>
+                                    <th><i class="fas fa-user"></i> Apellidos</th>
+                                    <th><i class="fas fa-venus-mars"></i> Género</th>
+                                    <th><i class="fas fa-phone"></i> Teléfono</th>
+                                    <th><i class="fas fa-birthday-cake"></i> Edad</th>
+                                    <th><i class="fas fa-cog"></i> Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbodyEstudiantes">
+                                <tr>
+                                    <td colspan="7" class="empty-message">No hay estudiantes registrados</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </section>
 
             <section id="sectionAsistencias" class="section">
                 <div class="section-header">
-                    <h2>Registro de Asistencias</h2>
-                    <div>
-                        <button id="btnAgregarAsistencia" class="btn-primary">➕ Registrar Asistencia</button>
-                        <button id="btnExportarAsistencias" class="btn-secondary">📤 Exportar Asistencias</button>
+                    <h2><i class="fas fa-calendar-check"></i> Registro de Asistencias</h2>
+                    <div class="header-actions">
+                        <button id="btnAgregarAsistencia" class="btn btn-primary"><i class="fas fa-plus"></i> Nueva Asistencia</button>
+                        <button id="btnExportarAsistencias" class="btn btn-outline"><i class="fas fa-file-export"></i> Exportar</button>
                     </div>
                 </div>
-                <div class="table-container">
-                    <table id="tablaAsistencias">
-                        <thead>
-                            <tr>
-                                <th>Fecha</th>
-                                <th>DNI</th>
-                                <th>Estudiante</th>
-                                <th>Hora</th>
-                                <th>Estado</th>
-                                <th>Acciones</th>
-                            </tr>
-                        </thead>
-                        <tbody id="tbodyAsistencias">
-                        </tbody>
-                    </table>
+                <div class="card">
+                    <div class="table-container">
+                        <table id="tablaAsistencias" class="data-table">
+                            <thead>
+                                <tr>
+                                    <th><i class="fas fa-calendar"></i> Fecha</th>
+                                    <th><i class="fas fa-id-card"></i> DNI</th>
+                                    <th><i class="fas fa-user-graduate"></i> Estudiante</th>
+                                    <th><i class="fas fa-clock"></i> Hora</th>
+                                    <th><i class="fas fa-check-circle"></i> Estado</th>
+                                    <th><i class="fas fa-cog"></i> Acciones</th>
+                                </tr>
+                            </thead>
+                            <tbody id="tbodyAsistencias">
+                                <tr>
+                                    <td colspan="6" class="empty-message">No hay asistencias registradas</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             </section>
 
             <section id="sectionEscanearQR" class="section">
                 <div class="section-header">
-                    <h2>Escanear Código QR</h2>
-                    <p id="qr-instruction">Apunte la cámara al código QR del estudiante</p>
+                    <h2><i class="fas fa-camera"></i> Escanear Código QR</h2>
+                    <p class="qr-instruction">Apunte la cámara al código QR del estudiante</p>
                 </div>
-                <div id="qr-reader-container">
-                    <div id="qr-reader"></div>
+                <div class="card scanner-card">
+                    <div class="scanner-container">
+                        <div id="qr-reader"></div>
+                        <div class="scanner-overlay">
+                            <div class="scanner-frame">
+                                <div class="corner top-left"></div>
+                                <div class="corner top-right"></div>
+                                <div class="corner bottom-left"></div>
+                                <div class="corner bottom-right"></div>
+                            </div>
+                        </div>
+                    </div>
                 </div>
             </section>
         </main>

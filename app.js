@@ -264,9 +264,41 @@ function onScanSuccess(decodedText) {
     if (qrScanner) {
         qrScanner.pause();
     }
-    document.getElementById('qr-dni-result').textContent = decodedText;
-    document.getElementById('qr-result').classList.remove('hidden');
-    scannedDni = decodedText;
+
+    const student = students.find(s => s.dni === decodedText);
+    if (student) {
+        const today = new Date().toISOString().split('T')[0];
+        const now = new Date().toTimeString().split(':').slice(0, 2).join(':');
+
+        asistencias.push({
+            dni: decodedText,
+            fecha: today,
+            hora: now,
+            estado: 'Presente'
+        });
+
+        renderAsistencias();
+        qrScanner?.clear();
+        qrScanner = null;
+
+        Swal.fire({
+            title: '✅ Asistencia Registrada',
+            html: `<p><strong>${student.nombres} ${student.apellidos}</strong></p>
+                   <p>DNI: ${decodedText}</p>
+                   <p>Fecha: ${today}</p>
+                   <p>Hora: ${now}</p>`,
+            icon: 'success',
+            timer: 2000,
+            showConfirmButton: false
+        }).then(() => {
+            switchSection('escanear');
+        });
+    } else {
+        document.getElementById('qr-dni-result').textContent = decodedText;
+        document.getElementById('qr-result').classList.remove('hidden');
+        scannedDni = decodedText;
+        Swal.fire('❌ Error', `No se encontró el estudiante con DNI: ${decodedText}`, 'error');
+    }
 }
 
 function onScanError(error) {

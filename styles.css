@@ -278,7 +278,10 @@ body {
 
 .scanner-container {
     position: relative;
-    display: inline-block;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
 }
 
 .scanner-overlay {
@@ -367,4 +370,115 @@ body {
         padding: 10px 15px;
         font-size: 0.85em;
     }
+}
+
+/* ==========================================================================
+   ESTILOS OPTIMIZADOS PARA EL MODAL DE FORMULARIOS (SWEETALERT2)
+   ========================================================================== */
+
+.swal-form-flex {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    text-align: left;
+    padding: 10px 5px;
+    width: 100%;
+    box-sizing: border-box;
+}
+
+.swal-form-flex .input-field {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    width: 100%;
+}
+
+.swal-form-flex .input-field label {
+    font-size: 0.9em;
+    font-weight: 600;
+    color: var(--dark);
+}
+
+.swal-form-flex input[type="text"],
+.swal-form-flex input[type="number"],
+.swal-form-flex input[type="date"],
+.swal-form-flex input[type="time"],
+.swal-form-flex select {
+    width: 100%;
+    height: 44px;
+    padding: 0 14px;
+    font-size: 0.95em;
+    font-family: inherit;
+    border: 1.5px solid #cbd5e1;
+    border-radius: 10px;
+    background-color: #ffffff;
+    color: #334155;
+    outline: none;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease;
+    box-sizing: border-box;
+    margin: 0 !important;
+}
+
+.swal-form-flex input:focus,
+.swal-form-flex select:focus {
+    border-color: var(--primary);
+    box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.15);
+}
+
+.swal-form-flex .form-group-row {
+    display: flex;
+    align-items: flex-end;
+    gap: 12px;
+    width: 100%;
+}
+
+.swal-form-flex .form-group-row .input-field {
+    flex: 1;
+}
+
+.swal-form-flex .btn-scan-modal {
+    height: 44px;
+    padding: 0 18px;
+    background: #4dabf7;
+    color: white;
+    border: none;
+    border-radius: 10px;
+    font-weight: 600;
+    font-size: 0.9em;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    transition: background 0.2s ease, transform 0.1s ease;
+    white-space: nowrap;
+}
+
+.swal-form-flex .btn-scan-modal:hover {
+    background: #3793dd;
+}
+
+.swal-form-flex .btn-scan-modal:disabled {
+    background: var(--gray);
+    cursor: not-allowed;
+}
+
+.swal-form-flex .scanner-modal-wrapper {
+    width: 100%;
+    background: #000;
+    border-radius: 12px;
+    overflow: hidden;
+    padding: 5px;
+    box-sizing: border-box;
+}
+
+#dni-scanner {
+    width: 100%;
+    max-width: 100%;
+    margin: 0 auto;
+}
+
+.swal2-custom-modal-popup {
+    width: 480px !important;
+    border-radius: 16px !important;
+    padding: 25px !important;
 }

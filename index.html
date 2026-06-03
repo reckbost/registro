@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Gestión de Estudiantes y Asistencias</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/sweetalert2@11/dist/sweetalert2.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/jsqr@1.4.0/dist/jsQR.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html5-qrcode/2.3.8/html5-qrcode.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>🏫 Gestión de Estudiantes y Asistencias</h1>
+            <nav>
+                <button id="btnEstudiantes" class="active">Estudiantes</button>
+                <button id="btnAsistencias">Asistencias</button>
+                <button id="btnEscanearQR">Escanear QR</button>
+                <button id="btnBackup">💾 Backup</button>
+            </nav>
+        </header>
+
+        <main>
+            <section id="sectionEstudiantes" class="section active">
+                <div class="section-header">
+                    <h2>Lista de Estudiantes</h2>
+                    <div>
+                        <button id="btnAgregarEstudiante" class="btn-primary">➕ Agregar Estudiante</button>
+                        <button id="btnExportarEstudiantes" class="btn-secondary">📤 Exportar Estudiantes</button>
+                    </div>
+                </div>
+                <div class="table-container">
+                    <table id="tablaEstudiantes">
+                        <thead>
+                            <tr>
+                                <th>DNI</th>
+                                <th>Nombres</th>
+                                <th>Apellidos</th>
+                                <th>Género</th>
+                                <th>Teléfono</th>
+                                <th>Edad</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbodyEstudiantes">
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section id="sectionAsistencias" class="section">
+                <div class="section-header">
+                    <h2>Registro de Asistencias</h2>
+                    <div>
+                        <button id="btnAgregarAsistencia" class="btn-primary">➕ Registrar Asistencia</button>
+                        <button id="btnExportarAsistencias" class="btn-secondary">📤 Exportar Asistencias</button>
+                    </div>
+                </div>
+                <div class="table-container">
+                    <table id="tablaAsistencias">
+                        <thead>
+                            <tr>
+                                <th>Fecha</th>
+                                <th>DNI</th>
+                                <th>Estudiante</th>
+                                <th>Hora</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbodyAsistencias">
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section id="sectionEscanearQR" class="section">
+                <div class="section-header">
+                    <h2>Escanear Código QR</h2>
+                </div>
+                <div id="qr-reader-container">
+                    <div id="qr-reader"></div>
+                    <div id="qr-result" class="hidden">
+                        <h3>Resultado:</h3>
+                        <p id="qr-dni-result"></p>
+                        <button id="btnRegisterFromScan" class="btn-primary">Registrar Asistencia</button>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <script src="app.js"></script>
+</body>
+</html>
